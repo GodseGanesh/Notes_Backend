@@ -8,5 +8,7 @@ urlpatterns = [
     # path('note/<str:pk>/update/',views.update,name="update-note"),
     # path('note/<str:pk>/delete/',views.delete,name="delete-note"),
     path('note/<str:pk>/',views.note,name="note"),
+    path('login/',views.login,name="login"),
+    path('register/',views.register,name="register"),
 
 ]
