@@ -24,7 +24,7 @@ def login(request):
     user = authenticate(username=username,password=password)
     if user is not None:
         login(request, user)
-        return Response({"message": "User registered successfully!"}, status=status.HTTP_200_OK)
+        return Response({"message": "User registered successfully!","user":request.user}, status=status.HTTP_200_OK)
     return Response({"message": "Invalid Creadientials"}, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -33,14 +33,16 @@ def login(request):
 def notes(request):
 
     if request.method == 'GET':
-        obj=Notes.objects.all().order_by('-updated')
+        obj=Notes.objects.filter(user=request.user).order_by('-updated')
         serializers=NoteSerializer(obj,many=True)
         return Response(serializers.data)
     
     if request.method == 'POST':
         data = request.data
+        
         obj= Notes.objects.create(
-            body=data['body']
+            body=data['body'],
+            user = request.user
         )
         serializer = NoteSerializer(obj,many=False)
 
@@ -59,8 +61,9 @@ def note(request,pk):
     
     if request.method == 'PUT':
         data = request.data
+        
         obj= Notes.objects.get(id=pk)
-        serializer = NoteSerializer(instance=obj,data=data)
+        serializer = NoteSerializer(instance=obj,data=data,user = request.user)
 
         if serializer.is_valid():
             serializer.save()
