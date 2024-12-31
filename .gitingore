@@ -2,5 +2,4 @@
 *.pyc
 __pycache__/
 db.sqlite3
-git rm --cached db.sqlite3
-git rm --cached -r api/__pycache__
+
