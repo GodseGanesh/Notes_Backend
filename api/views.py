@@ -8,9 +8,13 @@ from .serializers import *
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 
+
+
 @api_view(['POST'])
 def register(request):
+    print(request.data)
     serializer = UserRegistrationSerializer(data=request.data)
+    
     if serializer.is_valid():
         serializer.save()
         return Response({"message": "User registered successfully!"}, status=status.HTTP_201_CREATED)
