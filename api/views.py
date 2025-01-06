@@ -23,6 +23,7 @@ def register(request):
 
 
 @api_view(['POST'])
+@permission_classes([AllowAny])
 def login(request):
     username = request.POST.get('username')
     password = request.POST.get('password')
