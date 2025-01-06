@@ -6,11 +6,12 @@ from .serializers import NoteSerializer
 from django.contrib.auth import authenticate,login
 from .serializers import *
 from rest_framework import status
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated,AllowAny
 
 
 
 @api_view(['POST'])
+@permission_classes([AllowAny])
 def register(request):
     print(request.data)
     serializer = UserRegistrationSerializer(data=request.data)
@@ -78,4 +79,8 @@ def note(request,pk):
         obj= Notes.objects.get(id=pk)
         obj.delete()
         return Response("Note was deleted")
+    
+    if request.method == 'PUT':
+        obj = Notes.objects.get(id=pk)
+        
 
