@@ -29,7 +29,7 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
             email = validated_data['email'],
             first_name = validated_data['first_name'],
             last_name = validated_data['last_name'],
-            password1 = validated_data['password1'],
-            password2 = validated_data['password2']
+            password=validated_data['password1'],
+           
         )
         return user
