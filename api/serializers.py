@@ -11,25 +11,19 @@ class NoteSerializer(ModelSerializer):
 
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
-    password1 = serializers.CharField(write_only=True, required=True)
-    password2 = serializers.CharField(write_only=True, required=True)
+    password = serializers.CharField(write_only=True, required=True)
+    confirm_password = serializers.CharField(write_only=True, required=True)
 
     class Meta:
         model = User
-        fields = ['username', 'email', 'password1','password2', 'first_name', 'last_name']
-    
+        fields = ['username', 'email', 'password', 'confirm_password', 'first_name', 'last_name']
+
     def validate(self, data):
-        if data['password1'] != data['password2']:
+        if data['password'] != data['confirm_password']:
             raise serializers.ValidationError({"password": "Passwords do not match."})
         return data
 
     def create(self, validated_data):
-        user = User.objects.create_user(
-            username=validated_data['username'],
-            email = validated_data['email'],
-            first_name = validated_data['first_name'],
-            last_name = validated_data['last_name'],
-            password=validated_data['password1'],
-           
-        )
-        return user
+        validated_data.pop('confirm_password')  # Remove confirm_password since it's not a User model field
+        return User.objects.create_user(**validated_data)
+
