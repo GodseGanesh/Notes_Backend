@@ -13,14 +13,17 @@ from rest_framework.permissions import IsAuthenticated,AllowAny
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def register(request):
-    print(request.data)
+    print("Request data:", request.data)  # Debugging step
+    
     serializer = UserRegistrationSerializer(data=request.data)
     
     if serializer.is_valid():
-        serializer.save()
+        user = serializer.save()
+        print("User created:", user)  # Debugging step
         return Response({"message": "User registered successfully!"}, status=status.HTTP_201_CREATED)
+    
+    print("Validation errors:", serializer.errors)  # Debugging step
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
