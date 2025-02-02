@@ -75,32 +75,28 @@ def notes(request):
     
     
 
-@api_view(['GET','PUT','DELETE'])
+@api_view(['GET', 'PUT', 'DELETE'])
 @permission_classes([IsAuthenticated])
-def note(request,pk):
+def note(request, pk):
+    try:
+        note = Notes.objects.get(id=pk, user=request.user)  # Ensure the note belongs to the current user
+    except Notes.DoesNotExist:
+        return Response({"error": "Note not found or not owned by the current user"}, status=404)
 
     if request.method == 'GET':
-        obj= Notes.objects.get(id=pk)
-        serializers = NoteSerializer(obj,many=False)
-        return Response(serializers.data)
-    
+        serializer = NoteSerializer(note)
+        return Response(serializer.data)
+
     if request.method == 'PUT':
         data = request.data
-        
-        obj= Notes.objects.get(id=pk)
-        serializer = NoteSerializer(instance=obj,data=data,user = request.user)
+        serializer = NoteSerializer(instance=note, data=data)
 
         if serializer.is_valid():
-            serializer.save()
+            serializer.save()  # The user is already associated through the view
+            return Response(serializer.data)
 
-        return Response(serializer.data)
-    
+        return Response(serializer.errors, status=400)
+
     if request.method == 'DELETE':
-        obj= Notes.objects.get(id=pk)
-        obj.delete()
-        return Response("Note was deleted")
-    
-    if request.method == 'PUT':
-        obj = Notes.objects.get(id=pk)
-        
-
+        note.delete()
+        return Response({"message": "Note was deleted"}, status=204)
