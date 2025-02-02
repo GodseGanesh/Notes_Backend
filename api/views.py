@@ -3,7 +3,7 @@ from rest_framework.decorators import api_view,permission_classes
 from rest_framework.response import Response
 from .models import Notes
 from .serializers import NoteSerializer
-from django.contrib.auth import authenticate,login
+from django.contrib.auth import authenticate,login as auth_login
 from .serializers import *
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated,AllowAny
@@ -33,7 +33,7 @@ def login(request):
     password = request.data.get('password')
     user = authenticate(username=username,password=password)
     if user is not None:
-        login(request, user)
+        auth_login(request, user)
         return Response({"message": "User registered successfully!","user":request.user}, status=status.HTTP_200_OK)
     return Response({"message": "Invalid Creadientials"}, status=status.HTTP_400_BAD_REQUEST)
 
