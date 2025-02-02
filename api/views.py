@@ -29,13 +29,28 @@ def register(request):
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def login_view(request):
-    username = request.data.get('username')
-    password = request.data.get('password')
-    user = authenticate(username=username,password=password)
-    if user is not None:
-        auth_login(request, user)
-        return Response({"message": "User registered successfully!","user":request.user}, status=status.HTTP_200_OK)
-    return Response({"message": "Invalid Creadientials"}, status=status.HTTP_400_BAD_REQUEST)
+    try:
+        username = request.data.get('username')
+        password = request.data.get('password')
+
+        if not username or not password:
+            return Response({"message": "Username and password are required"}, status=status.HTTP_400_BAD_REQUEST)
+
+        user = authenticate(username=username, password=password)
+
+        if user is not None:
+            auth_login(request, user)
+            return Response({
+                "message": "User logged in successfully!",
+                "username": user.username,
+                "email": user.email  # Only serializable fields
+            }, status=status.HTTP_200_OK)
+
+        return Response({"message": "Invalid credentials"}, status=status.HTTP_400_BAD_REQUEST)
+
+    except Exception as e:
+        return Response({"message": f"An error occurred: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
 
 @api_view(['GET','POST'])
