@@ -28,7 +28,7 @@ def register(request):
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
-def login(request):
+def login_view(request):
     username = request.data.get('username')
     password = request.data.get('password')
     user = authenticate(username=username,password=password)
